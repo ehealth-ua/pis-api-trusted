@@ -178,9 +178,7 @@ Look at [**Dummy Trusted sign-up via confidant patient**](https://ehealthtrusted
 + Request (application/json)
     + Attributes (object)
         + `person` (object, required)
-            + include `Person`
-            + emergency_contact (object, required)
-                + include `Emergency_Contact`
+            + include `Person_Request_PIS`
         + `patient_signed`: true (boolean, required)
         + `process_disclosure_data_consent`: true (boolean, required)
         + `jwt`: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNwLnZpcm55QGdtYWlsLmNvbSIsInRpbWVzdGFtcCI6IjIwMTgtMDItMjggMTA6Mzg6MDAifQ.LJRLTqK-zf9gxDNMONcI8cMCSYosDtmAIZqhzZUdhz4` (string, required)
@@ -204,7 +202,7 @@ Look at [**Dummy Trusted sign-up via confidant patient**](https://ehealthtrusted
 + Request (application/json)
     + Attributes (object)
         + `person` (object, required)
-            + include `Person_info_Public_PIS`
+            + include `Person_Request_PIS_With_Confidant`
         + `patient_signed`: true (boolean, required)
         + `process_disclosure_data_consent`: true (boolean, required)
 
@@ -376,3 +374,74 @@ Look at [**Dummy Trusted sign-up via confidant patient**](https://ehealthtrusted
 + phone_number: `+380508887700` (string, optional) - required for type = OTP
 + value: `c282f8a9-e709-40aa-94b4-dde1402bf4b6` (string, optional) - requered for type = THIRD_PERSON
 + alias: `husband` (string, optional) - required it type = THIRD_PERSON,  and optional for type = OTP or OFFLINE
+
+### `Authentication_Method_PIS_Patient`
++ type (enum, required)
+    - OTP
++ phone_number: `+380508887700` (string, optional) - required for type = OTP
+
+### `Authentication_Method_PIS_Patient_With_Confidant`
++ type (enum, required)
+    - THIRD_PERSON
++ value: `c282f8a9-e709-40aa-94b4-dde1402bf4b6` (string, optional) - requered for type = THIRD_PERSON
++ alias: `husband` (string, optional) - required it type = THIRD_PERSON,  and optional for type = OTP or OFFLINE
+
+### `Person_Request_PIS`
++ first_name: Петро (string, required)
++ last_name: Іванов (string, required)
++ second_name: Миколайович (string, optional)
++ birth_date: `2009-07-05` (string, required)
++ birth_country: `Україна` (string, required)
++ birth_settlement: `Вінниця` (string, required)
++ gender: MALE, FEMALE (enum[string], required)
++ email: email@example.com (string, optional)
++ no_tax_id: false (boolean, required)
++ tax_id: 3999869394 (string, optional)
++ secret: secret (string, required)
++ documents (array, required)
+    + (object)
+        + type: PASSPORT (string, required) - `Dictionary DOCUMENT_TYPE`
+        + number: АА120518 (string, required) - document issue number
+        + issued_by: `Рокитнянським РВ ГУ МВС Київської області` (string, required) - authority which issued the document
+        + issued_at: `2017-02-28` (string, required) - the date when document was issued
+        + expiration_date: `2027-02-28` (string, optional) - the date when document expired, is necessery for those documents which has this date, ex, Temporary certificate, etc.
++ addresses (array[`Address`], required)
++ phones (array[`Phone`], optional)
++ `authentication_methods` (array[`Authentication_Method_PIS_Patient`], optional)
++ unzr: `20090705-00011` (string, optional) - the record number in the demographic register
++ emergency_contact (object, required)
+    + include `Emergency_Contact`
++ preferred_way_communication: email (enum, optional) - the way how a patient wants to be reached
+    - email
+    - phone
+
+### `Person_Request_PIS_With_Confidant`
++ first_name: Петро (string, required)
++ last_name: Іванов (string, required)
++ second_name: Миколайович (string, optional)
++ birth_date: `2009-07-05` (string, required)
++ birth_country: `Україна` (string, required)
++ birth_settlement: `Вінниця` (string, required)
++ gender: MALE, FEMALE (enum[string], required)
++ email: email@example.com (string, optional)
++ no_tax_id: false (boolean, required)
++ tax_id: 3999869394 (string, optional)
++ secret: secret (string, required)
++ documents (array, required)
+    + (object)
+        + type: BIRTH_CERTIFICATE (string, required) - `Dictionary DOCUMENT_TYPE`
+        + number: АА120518 (string, required) - document issue number
+        + issued_by: `Рокитнянським РВ ГУ МВС Київської області` (string, required) - authority which issued the document
+        + issued_at: `2017-02-28` (string, required) - the date when document was issued
+        + expiration_date: `2027-02-28` (string, optional) - the date when document expired, is necessery for those documents which has this date, ex, Temporary certificate, etc.
++ addresses (array[`Address`], required)
++ phones (array[`Phone`], optional)
++ `authentication_methods` (array[`Authentication_Method_PIS_Patient_With_Confidant`], optional)
++ unzr: `20090705-00011` (string, optional) - the record number in the demographic register
++ emergency_contact (object, required)
+    + include `Emergency_Contact`
++ `confidant_person` (object, required)
+    + include `Confidant_Person_PIS`
++ preferred_way_communication: email (enum, optional) - the way how a patient wants to be reached
+    - email
+    - phone
