@@ -108,6 +108,7 @@ Look at [**Dummy Trusted sign-up**](https://ehealthtrustedpisapi.docs.apiary.io/
             + code: 201 (number)
         + data (object, required)
             + person (object, required)
+                + id: `1380df72-275a-11e7-93ae-92361f002671` (string, required)
                 + include `Person`
                 + emergency_contact (object, required)
                     + include `Emergency_Contact`
@@ -149,7 +150,8 @@ Look at [**Dummy Trusted sign-up via confidant patient**](https://ehealthtrusted
         + meta (`Response__Meta`)
             + code: 201 (number)
         + data (object, required)
-            + patient (object, required)
+            + person (object, required)
+                + id: `1380df72-275a-11e7-93ae-92361f002671` (string, required)
                 + include `Person`
                 + emergency_contact (object, required)
                     + include `Emergency_Contact`
@@ -201,6 +203,7 @@ Look at [**Dummy Trusted sign-up via confidant patient**](https://ehealthtrusted
             + code: 201 (number)
         + data (object, required)
             + person (object, required)
+                + id: `1380df72-275a-11e7-93ae-92361f002671` (string, required)
                 + include `Person`
                 + emergency_contact (object, required)
                     + include `Emergency_Contact`
@@ -223,6 +226,11 @@ Look at [**Dummy Trusted sign-up via confidant patient**](https://ehealthtrusted
         + meta (`Response__Meta`)
             + code: 201 (number)
         + data (object, required)
+            + person (object, required)
+                + id: `1380df72-275a-11e7-93ae-92361f002671` (string, required)
+                + include `Person`
+                + emergency_contact (object, required)
+                    + include `Emergency_Contact`
             + user (object, required)
                 + `id`: `7673eb5a-0cae-4fa8-9f81-e6da46aa2940` (string, optional)
                 + tax_id: 3000080053 (string, required)
