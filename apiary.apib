@@ -1,13 +1,42 @@
 FORMAT: 1A
-HOST: https://trusted-pis.ehealth.gov.ua/
+HOST: https://ehealth.edenlabllc.com/
 
 # eHealth Trusted PIS API
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+This is a **Trusted PIS-related sign-in and sign-up part** of API documentation for Ukrainian Health Services government institution back-end, that should provide:
+
+* Patient sign-in
+* Patient sign-in by confidant person
+* Patient sign-up
+* Patient sign-up by confidant person
+
+> In order to get specification for PIS-related consumers part of API documentation please proceed [here](https://ehealthpisapi.docs.apiary.io/#)
 
 # Group Public. Patient Information System
 
-##Sign-in [/api/sign-in]
+The table below reflects actual API endpoints for all the ehealth environments
+Env     | Host
+--------|-----
+DEV     | https://pis.dev.edenlab.com.ua
+
+## Sign-in [/api/sign-in]
+
+### Get nonce [GET /oauth/nonce]
+
+This endpoint allows to get nonce (one time JWT) for active client of the system.
+
+Field `client_secret` is mandatory for client type = TRUSTED_PIS.
+
++ Request (application/json)
+
+    + Attributes (object)
+        + `client_id`: `30074b6e-fbab-4dc1-9d37-88c21dab1847` (string, required)
+        + `client_secret`: `c2778f3064753ea70de870a53795f5c9` (string, required)
+
++ Response 200 (application/json)
+    + Attributes (`Response_OK`)
+        + data (object)
+           + token: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJtaXRocmlsLWxvZ2luIiwiZXhwIjoxNTIzNDM5MjAxLCJpYXQiOjE1MjM0MzgzMDEsImlzcyI6IkVIZWFsdGgiLCJqdGkiOiJlZmUxZjA4ZS1kNGI0LTRjZWYtYTAyYy03OGVhNGExZGRhMjUiLCJuYmYiOjE1MjM0MzgzMDAsIm5vbmNlIjoxMjMsInN1YiI6MTIzLCJ0eXAiOiJhY2Nlc3MifQ.UZ6S92h3nAG-GKY_XUE1Rc6uR_BuqR8ufUJfMhhKtNmt7DkkQlU49qPXjL0LFddVz1E2DXi2a-BQ0FG-DHsTHA' (string, required)
 
 ### Patient sign-in [POST /api/pis/sign-in]
 
@@ -73,6 +102,27 @@ Look at [**Dummy Confidant patient sign-in**](https://ehealthtrustedpisapi.docs.
         + meta (Response__Meta)
             + code: 201 (number)
         + data (`Access_Token`)
+
+### Use Refresh Token for Access Token extension [POST /oauth/tokens]
+
+This endpoint is used to renew access token using refresh token. 
+
+It is available to renew access token as many time as needed during the lifetime of refresh token.
+
++ Request (application/json)
+
+    + Attributes (object)
+        + token (object)
+            + `client_id`: `6498d88e-97fb-47e2-85a5-99e884f888aa` (string, required) - Medical Service provider ID issued after legal_entity registration. Used to identify the context of the MSP/Pharmacy.
+            + client_secret: `msp-001-secret-key` (string, required) - Medical Service provider secret key issued upon integration request. Used to identify MSP.
+            + refresh_token: `my-oauth-refresh-token` (string, required) - oAuth refresh token.
+            + `grant_type`: refresh_token (string, fixed) - oAuth Grant Type. Currently only `authorization_code` is supported.
+
++ Response 201 (application/json)
+    + Attributes (`Response_OK`)
+        + meta (Response__Meta)
+            + code: 201 (number)
+        + data (`Access_Token_1`)
 
 ##Sign-up [/api/sign-up]
 
@@ -244,10 +294,26 @@ Look at [**Dummy Trusted sign-up via confidant patient**](https://ehealthtrusted
 + id: `3ff33ced-69dc-415a-b231-c6446898335a` - oAuth token identifier
 + expires_at: 1498749591 (number, required) - expiration date-time timestamp
 + details (object)
+    + app_id: `d290f1ee-6c54-4b01-90e6-d701748f0851` - Identifier of approval between user, applicant user and client that was used to issue access token
+    + applicant_user_id: `d290f1ee-6c54-4b01-90e6-d701748f0851` - Identifier of user that initiated access token generation
+    + applicant_person_id: `d290f1ee-6c54-4b01-90e6-d701748f0851` - Identifier of person that is accosiated with user who initiated access token generation
     + scope: `capitation_contracts:view capitation_contracts:create patients:view patients:create` (string, required) - List of scopes that is required in application business logic, separated by space
     + refresh_token: `my-oauth-refresh-token` (string, required) - oAuth refresh token
-    + redirect_uri: `https://example.com/` (string, required) - Redirect URI
-    + `grant_type`: `authorization_code`
+    + `grant_type`: `pis_auth`
+    + client_id: `d290f1ee-6c54-4b01-90e6-d701748f0851` (string, required) - Client ID of authorized user
+
+### Access_Token_1
++ value: `SnNRdCtvU0tTOENBV2dLRUZwNmIzZz09` (string, required) - oAuth access token.
++ user_id: `3ff33ced-69dc-415a-b231-c6446898335a` (string, required) - User identifier
++ name: `access_token` (string, required) - oAuth token name
++ id: `3ff33ced-69dc-415a-b231-c6446898335a` - oAuth token identifier
++ expires_at: 1498749591 (number, required) - expiration date-time timestamp
++ details (object)
+    + app_id: `d290f1ee-6c54-4b01-90e6-d701748f0851` - Identifier of approval between user, applicant user and client that was used to issue access token
+    + applicant_user_id: `d290f1ee-6c54-4b01-90e6-d701748f0851` - Identifier of user that initiated access token generation
+    + applicant_person_id: `d290f1ee-6c54-4b01-90e6-d701748f0851` - Identifier of person that is accosiated with user who initiated access token generation
+    + scope: `capitation_contracts:view capitation_contracts:create patients:view patients:create` (string, required) - List of scopes that is required in application business logic, separated by space
+    + `grant_type`: `refresh_token`
     + client_id: `d290f1ee-6c54-4b01-90e6-d701748f0851` (string, required) - Client ID of authorized user.
 
 ### Response_OK
