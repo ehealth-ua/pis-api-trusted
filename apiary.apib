@@ -21,7 +21,7 @@ DEV     | https://pis.dev.edenlab.com.ua
 
 ## Sign-in [/api/sign-in]
 
-### Get nonce [GET /oauth/nonce]
+### Get nonce [POST /oauth/nonce]
 
 This endpoint allows to get nonce (one time JWT) for active client of the system.
 
@@ -30,8 +30,8 @@ Field `client_secret` is mandatory for client type = TRUSTED_PIS.
 + Request (application/json)
 
     + Attributes (object)
-        + `client_id`: `30074b6e-fbab-4dc1-9d37-88c21dab1847` (string, required)
-        + `client_secret`: `c2778f3064753ea70de870a53795f5c9` (string, required)
+        + `client_id`: `30074b6e-fbab-4dc1-9d37-88c21dab1847` (string, required) - Client identifier in the system.
+        + `client_secret`: `c2778f3064753ea70de870a53795f5c9` (string, required) - Required only for clients with `TRUSTED_PIS` client type.
 
 + Response 200 (application/json)
     + Attributes (`Response_OK`)
