@@ -12,12 +12,30 @@ This is a **Trusted PIS-related sign-in and sign-up part** of API documentation 
 
 > In order to get specification for PIS-related consumers part of API documentation please proceed [here](https://ehealthpisapi.docs.apiary.io/#)
 
+This API design in based on [Nebo #15 API Design Manifest](http://docs.apimanifest.apiary.io/).
+
 # Group Public. Patient Information System
 
 The table below reflects actual API endpoints for all the ehealth environments
 Env     | Host
 --------|-----
 DEV     | https://pis.dev.edenlab.com.ua
+
+**Notes:**
+- Every sign-in and sign-up method described here must be used only by Clients with `TRUSTED_PIS` client type.
+- When `access_token` expires, Client must renew it using `refresh_token` with `POST /oauth/tokens` method but via `grant_type=refresh_token`.
+
+**API-key:**
+- For identifiers of PIS clients (as a broker) we use term api-key. PIS must **mandatory** send api-key when called any eHealth API.
+- api-key is a `pis_client_secret` - Patient Information System secret key issued upon integration request.
+- api-key is dispatched in Request HEADER as a `API-key` attribute. Example:
+```
+HEADERS
+Content-Type:application/json
+Authorization:Bearer c2778f3064753ea70de870a53795f5c9
+api-key:uXhEczJ56adsfh3Ri9SUkc4en
+```
+- If PIS don't send api-key in Request HEADER, API return 401 error wih message "API-KEY header required".
 
 ## Sign-in [/api/sign-in]
 
