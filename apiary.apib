@@ -142,6 +142,21 @@ It is available to renew access token as many time as needed during the lifetime
             + code: 201 (number)
         + data (`Access_Token_1`)
 
+### Logout [POST /auth/logout]
+
+This endpoint is used to terminate users authenticated session based on a valid access token.
+
+Refresh token from authenticated session will also be expired.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer c2778f3064753ea70de870a53795f5c9
+
++ Response 200 (application/json)
+    + Attributes (`Response_OK`)
+
 ##Sign-up [/api/sign-up]
 
 ### Verify phone number [POST /api/sms_verifications]
