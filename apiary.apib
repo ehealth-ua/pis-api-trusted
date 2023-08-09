@@ -144,6 +144,36 @@ It is available to renew access token as many time as needed during the lifetime
 
 ##Sign-up [/api/sign-up]
 
+### Verify phone number [POST /api/sms_verifications]
+
+This endpoint is used to verify submitted phone number as a part of person registration process. 
+
+In case number needs verification - generate and send OTP, in case phone does not need verification - return OK.
+
+Authorization header must contain nonce that was generated for trusted PIS.
+
++ Request (application/json)
+
+    + Headers
+            Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJjYWJpbmV0LXJlZ2lzdHJhdGlvbiIsImVtYWlsIjoiYXByb2tvcHBoYXJtZGlyNEB1a3IubmV0IiwiZXhwIjoxNjgyNjkzNTc3LCJpYXQiOjE2ODI2NjQ3NzcsImlzcyI6IkVIZWFsdGgiLCJqdGkiOiIxOTAyYTkyYS00MDcyLTQ3MWEtYmU4NS1iZWU0MzQzNmNlYjEiLCJuYmYiOjE2ODI2NjQ3NzYsInN1YiI6ImFwcm9rb3BwaGFybWRpcjRAdWtyLm5ldCIsInR5cCI6ImFjY2VzcyJ9.EXTuYRQenjqzsjNAJ5agmEbSHcg_XRKwc3VOGAtSjfMOy4uIJ_BBMUeUWSVzy4_OezPjEIiVcnaLTN4pZbtgow
+
+    + Attributes (object)
+        + `factor`: `+380501112233` (string, required) - phone number that needs to be verified.
+        + `type`: SMS (enum, required) - verification type.
+            - SMS
+        + `content_hash`: `76dea970d89477ed03dc5289f297443c` (string, required) - MD5 hash of content with phone number that needs to be verified.
+
++ Response 200 (application/json)
+    + Attributes (`Response_OK`)
+        + meta (`Response__Meta`)
+            + code: 200 (number)
+        + data (object, required)
+            + `result`: `OTP sent` (enum, required) - phone verification result.
+                - `OTP sent`
+                - `Verified`
+        + urgent (object, optional)
+            + `next_step`: `REQUEST_OTP` (string, optional) - next step that needs to be taken in phone verification process.
+
 ### Patient sign-up [POST /api/pis/sign-up]
 
 This endpoint is used to authenticate, create mpi record for patient if needed, create user for patient if needed, approve scopes and sign-in user.
@@ -163,7 +193,7 @@ Look at [**Dummy Trusted sign-up**](https://ehealthtrustedpisapi.docs.apiary.io/
     + Attributes (object)
         + `signed_content`: `ewogICAgImZpcnN0X25hbWUiOiAi0J/QtdGC0YDQviIsCiAgICAibGFzdF9uYW1lIjogItCG0LLQsNC90L7QsiIsCiAgICAic2Vjb25kX25hbWUiOiAi0JzQuNC60L7Qu9Cw0LnQvtCy0LjRhyIsCiAgICAiYmlydGhfZGF0ZSI6ICIxOTkxLTA4LTE5IiwKICAgICJiaXJ0aF9jb3VudHJ5IjogItCj0LrRgNCw0ZfQvdCwIiwKICAgICJiaXJ0aF9zZXR0bGVtZW50IjogItCS0ZbQvdC90LjRhtGPIiwKICAgICJnZW5kZXIiOiAiTUFMRSIsCiAgICAiZW1haWwiOiAiZW1haWxAZXhhbXBsZS5jb20iLAogICAgInRheF9pZCI6ICIzMTI2NTA5ODE2IiwKICAgICJzZWNyZXQiOiAic2VjcmV0IiwKICAgICJkb2N1bWVudHMiOiBbCiAgICAgIHsKICAgICAgICAidHlwZSI6ICJQQVNTUE9SVCIsCiAgICAgICAgIm51bWJlciI6ICIxMjA1MTgiLAogICAgICAgICJpc3N1ZWRfYnkiOiAi0KDQvtC60LjRgtC90Y/QvdGB0YzQutC40Lwg0KDQkiDQk9CjINCc0JLQoSDQmtC40ZfQstGB0YzQutC+0Zcg0L7QsdC70LDRgdGC0ZYiLAogICAgICAgICJpc3N1ZWRfYXQiOiAiMjAxNy0wMi0yOCIKICAgICAgfQogICAgXSwKICAgICJhZGRyZXNzZXMiOiBbCiAgICAgIHsKICAgICAgICAidHlwZSI6ICJSRVNJREVOQ0UiLAogICAgICAgICJjb3VudHJ5IjogIlVBIiwKICAgICAgICAiYXJlYSI6ICLQltC40YLQvtC80LjRgNGB0YzQutCwIiwKICAgICAgICAicmVnaW9uIjogItCR0LXRgNC00LjRh9GW0LLRgdGM0LrQuNC5IiwKICAgICAgICAic2V0dGxlbWVudCI6ICLQmtC40ZfQsiIsCiAgICAgICAgInNldHRsZW1lbnRfdHlwZSI6ICJDSVRZIiwKICAgICAgICAic2V0dGxlbWVudF9pZCI6ICI0MzQzMjQzMiIsCiAgICAgICAgInN0cmVldF90eXBlIjogIlNUUkVFVCIsCiAgICAgICAgInN0cmVldCI6ICLQstGD0LsuINCd0ZbQttC40L3RgdGM0LrQsCIsCiAgICAgICAgImJ1aWxkaW5nIjogIjE1IiwKICAgICAgICAiYXBhcnRtZW50IjogIjIzIiwKICAgICAgICAiemlwIjogIjAyMDkwIgogICAgICB9CiAgICBdLAogICAgInBob25lcyI6IFsKICAgICAgewogICAgICAgICJ0eXBlIjogIk1PQklMRSIsCiAgICAgICAgIm51bWJlciI6ICIrMzgwNTAzNDEwODcwIgogICAgICB9CiAgICBdLAogICAgImF1dGhlbnRpY2F0aW9uX21ldGhvZHMiOiBbCiAgICAgIHsKICAgICAgICAidHlwZSI6ICJPVFAiLAogICAgICAgICJwaG9uZV9udW1iZXIiOiAiKzM4MDUwODg4NzcwMCIKICAgICAgfQogICAgXSwKICAgICJwcmVmZXJyZWRfd2F5X2NvbW11bmljYXRpb24iOiAiZW1haWwiLAogICAgImVtZXJnZW5jeV9jb250YWN0IjogewogICAgICAiZmlyc3RfbmFtZSI6ICLQn9C10YLRgNC+IiwKICAgICAgImxhc3RfbmFtZSI6ICLQhtCy0LDQvdC+0LIiLAogICAgICAic2Vjb25kX25hbWUiOiAi0JzQuNC60L7Qu9Cw0LnQvtCy0LjRhyIsCiAgICAgICJwaG9uZXMiOiBbCiAgICAgICAgewogICAgICAgICAgInR5cGUiOiAiTU9CSUxFIiwKICAgICAgICAgICJudW1iZXIiOiAiKzM4MDUwMzQxMDg3MCIKICAgICAgICB9CiAgICAgIF0KICAgIH0sCiAgICAicHJvY2Vzc19kaXNjbG9zdXJlX2RhdGFfY29uc2VudCI6IHRydWUKICB9Cn0=` (string, required)
         + `signed_content_encoding`: base64 (string, required)
-        + otp: 1234 (number, optional)
+        + otp: 1234 (number, optional) - optional OTP that was sent to authentication method phone number via `Verify phone number` method
         + token (object, required)
             + `grant_type`: pis_auth (string, fixed, required) - Auth Grant Type. Currently only `pis_auth` is supported.
             + `client_id`: `4fc161ad-5e3d-4c5e-9a9e-189e2ddffe56` (string, required) - Patient information system ID. Used to identify the context of the PIS.
