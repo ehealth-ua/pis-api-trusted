@@ -29,15 +29,6 @@ DEV     | https://pis.dev.edenlab.com.ua
 - api-key is dispatched in Request HEADER as a `API-key` attribute. 
 - If PIS don't send api-key in Request HEADER, API return 401 error wih message "API-KEY header required".
 
-Example:
-```
-HEADERS
-Content-Type:application/json
-Authorization:Bearer c2778f3064753ea70de870a53795f5c9
-api-key:uXhEczJ56adsfh3Ri9SUkc4en
-```
-
-
 ## Sign-in [/api/sign-in]
 
 ### Get nonce [POST /oauth/nonce]
