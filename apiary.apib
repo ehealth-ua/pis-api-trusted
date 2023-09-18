@@ -9,6 +9,7 @@ This is a **Trusted PIS-related sign-in and sign-up part** of API documentation 
 * Patient sign-in by confidant person
 * Patient sign-up
 * Patient sign-up by confidant person
+* Patient data management
 
 > In order to get specification for PIS-related consumers part of API documentation please proceed [here](https://ehealthpisapi.docs.apiary.io/#)
 
@@ -264,6 +265,47 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
                 + `id`: `7673eb5a-0cae-4fa8-9f81-e6da46aa2940` (string, optional)
                 + tax_id: 3000080053 (string, required)
             + token (`Access_Token`)
+
+## Person requests [/api/pis/trusted/person_requests]
+
+### Initialize Update Person details [POST /api/pis/trusted/person_requests]
+
+Use this method to initialize creation of Person request to update the person details according to his id, which was previously found using person_id from access token.
+
+This endpoint must be used only by trusted PIS clients.
+
+After person request is created, [Complete Update Person details](https://ehealthpisapi.docs.apiary.io/#reference/public.-patient-information-system/person-requests/complete-update-person-details) method must be called.
+
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer c2778f3064753ea70de870a53795f5c9
+            api-key: uXhEczJ56adsfh3Ri9SUkc4en
+
+    + Attributes (object)
+        + `person` (object, required)
+            + include `Update_Person_Request_PIS`
+        + `patient_signed`: false (boolean, required)
+        + `process_disclosure_data_consent`: true (boolean, required)
+
++ Response 201 (application/json)
+    + Attributes (`Response_OK`)
+        + meta (`Response__Meta`)
+            + code: 201 (number)
+        + data (object, required)
+            + `channel`: `PIS` (string, required)
+            + `content`: `Person request content` (string, required) - HTML document
+            + `id`: `387c210c-dc64-484d-befb-16bebe9439ac` (string, required)
+            + `status`: `NEW` (string, required)
+            + `person` (object, required)
+                + id: `1380df72-275a-11e7-93ae-92361f002671` (string, required)
+                + include `Update_Person_Request_PIS`
+            + `patient_signed`: false (boolean, required)
+            + `process_disclosure_data_consent`: true (boolean, required)
+        + urgent (object, required)
+            + documents (array[`media_content`], optional)
 
 # Group Public. Dummy methods
 
@@ -583,6 +625,34 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
     + include `Emergency_Contact`
 + `confidant_person` (object, required)
     + include `Confidant_Person_PIS`
++ preferred_way_communication: email (enum, optional) - the way how a patient wants to be reached
+    - email
+    - phone
+    
+### `Update_Person_Request_PIS`
++ first_name: Петро (string, required)
++ last_name: Іванов (string, required)
++ second_name: Миколайович (string, optional)
++ birth_date: `2009-07-05` (string, required)
++ birth_country: `Україна` (string, required)
++ birth_settlement: `Вінниця` (string, required)
++ gender: MALE, FEMALE (enum[string], required)
++ email: email@example.com (string, optional)
++ no_tax_id: false (boolean, optional)
++ tax_id: 3999869394 (string, optional)
++ secret: secret (string, required)
++ documents (array, required)
+    + (object)
+        + type: PASSPORT (string, required) - `Dictionary DOCUMENT_TYPE`
+        + number: АА120518 (string, required) - document issue number
+        + issued_by: `Рокитнянським РВ ГУ МВС Київської області` (string, required) - authority which issued the document
+        + issued_at: `2017-02-28` (string, required) - the date when document was issued
+        + expiration_date: `2027-02-28` (string, optional) - the date when document expired, is necessery for those documents which has this date, ex, Temporary certificate, etc.
++ addresses (array[`Address`], required)
++ phones (array[`Phone`], optional)
++ unzr: `20090705-00011` (string, optional) - the record number in the demographic register
++ emergency_contact (object, required)
+    + include `Emergency_Contact`
 + preferred_way_communication: email (enum, optional) - the way how a patient wants to be reached
     - email
     - phone
