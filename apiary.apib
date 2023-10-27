@@ -82,7 +82,7 @@ Signed content must contain signed nonce that was generated for trusted PIS.
 
 This endpoint is used to authenticate, approve scopes and sign-in as a confidant patient. 
 
-> **Note:** It could be done ONLY by already authenticated patient AND there is a registered relation between actor (authenticated patient) and related patient
+> **Note:** It could be done only if there is a registered relation between actor (authenticated patient) and related patient
 
 If user does not exist - search for active patient and create user.
 
@@ -96,7 +96,6 @@ Look at [**Dummy Confidant patient sign-in**](#reference/public.-dummy-methods/s
 
     + Headers
             
-            Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9
             api-key: uXhEczJ56adsfh3Ri9SUkc4en
 
     + Attributes (object)
@@ -230,7 +229,7 @@ This endpoint is used to register patient (Legally Incapacitated) in the system 
 
 > Note: It could be done ONLY when the system is able to validate their relation using trusted external DBs (eg. GOV services)
 
-This endpoint must be used only by trusted PIS clients. It could be done only by already authenticated patient
+This endpoint must be used only by trusted PIS clients.
 
 Signed content must contain patient data needed to create new MPI record
 
@@ -240,7 +239,6 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
 
     + Headers
             
-            Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9
             api-key: uXhEczJ56adsfh3Ri9SUkc4en
 
     + Attributes (object)
