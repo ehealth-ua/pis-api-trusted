@@ -1,9 +1,9 @@
-FORMAT: 1A
+FORMAT: 1
 HOST: https://api.ehealth.gov.ua
 
 # PIS TRUSTED API
 
-**Version: 9.5.2 v.1**
+**Version: 9.5.2 v.2**
 
 This is a **Trusted PIS-related sign-in and sign-up part** of API documentation for Ukrainian Health Services government institution back-end, that should provide:
 
@@ -11,6 +11,7 @@ This is a **Trusted PIS-related sign-in and sign-up part** of API documentation 
 * Patient sign-in by confidant person
 * Patient sign-up
 * Patient sign-up by confidant person
+* Patient data management
 
 > In order to get specification for PIS-related consumers part of API documentation please proceed [here](https://ehealthpisapi.docs.apiary.io/#)
 
@@ -19,9 +20,9 @@ This is a **Trusted PIS-related sign-in and sign-up part** of API documentation 
 The table below reflects actual API endpoints for all the eHealth environments
 Env     | Host
 --------|-----
-DEMO    | https://api-demo.ehealth.gov.ua
-PREPROD | https://api-preprod.ehealth.gov.ua
-PROD    | https://api.ehealth.gov.ua
+DEMO     | https://auth-demo.ehealth.gov.ua
+PREPROD  | https://auth-preprod.ehealth.gov.ua
+PROD     | https://auth.ehealth.gov.ua 
 
 **Notes:**
 - Every sign-in and sign-up method described here must be used only by Clients with `TRUSTED_PIS` client type.
@@ -85,7 +86,7 @@ Signed content must contain signed nonce that was generated for trusted PIS.
 
 This endpoint is used to authenticate, approve scopes and sign-in as a confidant patient. 
 
-> **Note:** It could be done ONLY by already authenticated patient AND there is a registered relation between actor (authenticated patient) and related patient
+> **Note:** It could be done only if there is a registered relation between actor (authenticated patient) and related patient
 
 If user does not exist - search for active patient and create user.
 
@@ -95,11 +96,10 @@ Signed content must contain patient data to search and identify patient and vali
 
 Look at [**Dummy Confidant patient sign-in**](#reference/public.-dummy-methods/sign-in/dummy-confidant-patient-sign-in) for more details
 
-+ Request
++ Request (application/json)
 
     + Headers
             
-            Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9
             api-key: uXhEczJ56adsfh3Ri9SUkc4en
 
     + Attributes (object)
@@ -166,6 +166,7 @@ Authorization header must contain nonce that was generated for trusted PIS.
 + Request (application/json)
 
     + Headers
+
             Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJjYWJpbmV0LXJlZ2lzdHJhdGlvbiIsImVtYWlsIjoiYXByb2tvcHBoYXJtZGlyNEB1a3IubmV0IiwiZXhwIjoxNjgyNjkzNTc3LCJpYXQiOjE2ODI2NjQ3NzcsImlzcyI6IkVIZWFsdGgiLCJqdGkiOiIxOTAyYTkyYS00MDcyLTQ3MWEtYmU4NS1iZWU0MzQzNmNlYjEiLCJuYmYiOjE2ODI2NjQ3NzYsInN1YiI6ImFwcm9rb3BwaGFybWRpcjRAdWtyLm5ldCIsInR5cCI6ImFjY2VzcyJ9.EXTuYRQenjqzsjNAJ5agmEbSHcg_XRKwc3VOGAtSjfMOy4uIJ_BBMUeUWSVzy4_OezPjEIiVcnaLTN4pZbtgow
 
     + Attributes (object)
@@ -232,7 +233,7 @@ This endpoint is used to register patient (Legally Incapacitated) in the system 
 
 > Note: It could be done ONLY when the system is able to validate their relation using trusted external DBs (eg. GOV services)
 
-This endpoint must be used only by trusted PIS clients. It could be done only by already authenticated patient
+This endpoint must be used only by trusted PIS clients.
 
 Signed content must contain patient data needed to create new MPI record
 
@@ -242,7 +243,6 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
 
     + Headers
             
-            Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9
             api-key: uXhEczJ56adsfh3Ri9SUkc4en
 
     + Attributes (object)
@@ -269,9 +269,42 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
                 + tax_id: 3000080053 (string, required)
             + token (`Access_Token`)
 
+## Person requests [/api/pis/trusted/person_requests]
+
+### Initialize Update Person details [POST /api/pis/trusted/person_requests]
+
+Use this method to initialize creation of Person request to update the person details according to his id, which was previously found using person_id from access token.
+
+This endpoint must be used only by trusted PIS clients.
+
+After person request is created, [Complete Update Person details](https://ehealthpisapi.docs.apiary.io/#reference/public.-patient-information-system/person-requests/complete-update-person-details) method must be called.
+
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer c2778f3064753ea70de870a53795f5c9
+            api-key: uXhEczJ56adsfh3Ri9SUkc4en
+
+    + Attributes (object)
+        + `person` (object, required)
+            + include `Update_Person_Request_PIS`
+        + `patient_signed`: false (boolean, required)
+        + `process_disclosure_data_consent`: true (boolean, required)
+
++ Response 201 (application/json)
+    + Attributes (`Response_OK`)
+        + meta (`Response__Meta`)
+            + code: 201 (number)
+        + data (object, required)
+            + include `Person_request_details`
+        + urgent (object, required)
+            + documents (array[`media_content`], optional)
+
 # Group Public. Dummy methods
 
-##Sign-in [/api/sign-in]
+##Sign-in [/dummy/sign-in]
 
 ### Dummy Confidant patient sign-in [POST /dummy/pis/confidant/sign-in]
 
@@ -294,7 +327,7 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
                 + tax_id: 3000080053 (string, required)
             + token (`Access_Token`)
 
-##Sign-up [/api/sign-up]
+##Sign-up [/dummy/sign-up]
 
 ### Dummy Patient sign-up [POST /dummy/pis/sign-up]
 
@@ -346,7 +379,7 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
             + token (`Access_Token`)
 
 # Data Structures
-### Access_Token
+### `Access_Token`
 + value: `SnNRdCtvU0tTOENBV2dLRUZwNmIzZz09` (string, required) - oAuth access token.
 + user_id: `3ff33ced-69dc-415a-b231-c6446898335a` (string, required) - User identifier
 + name: `access_token` (string, required) - oAuth token name
@@ -361,7 +394,7 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
     + `grant_type`: `pis_auth`
     + client_id: `d290f1ee-6c54-4b01-90e6-d701748f0851` (string, required) - Client ID of authorized user
 
-### Access_Token_1
+### `Access_Token_1`
 + value: `SnNRdCtvU0tTOENBV2dLRUZwNmIzZz09` (string, required) - oAuth access token.
 + user_id: `3ff33ced-69dc-415a-b231-c6446898335a` (string, required) - User identifier
 + name: `access_token` (string, required) - oAuth token name
@@ -375,11 +408,11 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
     + `grant_type`: `refresh_token`
     + client_id: `d290f1ee-6c54-4b01-90e6-d701748f0851` (string, required) - Client ID of authorized user.
 
-### Response_OK
+### `Response_OK`
 + meta (Response__Meta, fixed-type)
 + data (object, fixed-type)
 
-### Response__Meta
+### `Response__Meta`
 + code: 200 (number) - HTTP response code.
 + url: https://example.com/resource (string) - URL to requested resource.
 + type (enum) - Type of data that is located in `data` attribute.
@@ -387,12 +420,12 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
     - list (string) - `data` attribute is a list.
 + `request_id`: `6617aeec-15e2-4d6f-b9bd-53559c358f97#17810` (string) - [Request ID](https://docs.apimanifest.apiary.io/#introduction/interacting-with-api/request-id). Send it with `X-Request-ID` header.
 
-### Response_Collection
+### `Response_Collection`
 + meta (Response__Meta, fixed-type)
 + data (array[], fixed-type)
 + paging (Response__Pagination, fixed-type)
 
-### Response__Pagination
+### `Response__Pagination`
 + limit: 20 (number) - A limit on the number of objects to be returned, between 1 and 100. Default: 50.
 + cursors (object)
     + `starting_after`: 56c31536a60ad644060041af (string) - A cursor for use in pagination. An object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with `obj_foo`, your subsequent call can include `starting_after=obj_foo` in order to fetch the next page of the list.
@@ -400,26 +433,26 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
 + size: 50 (number) - Total number of objects in collection.
 + has_more: false (boolean) - Is this collection have more data to load in the same style as last request loaded it.
 
-### media_content
+### `media_content`
 + type: `PASSPORT` (string, required)
 + url: `https://storage.ehealth.world` (string, required)
 
-### Approval_Response
+### `Approval_Response`
 + id: `approval-1380df72-275a-11e7-93ae-92361f002671` (string) - Internal app ID, a UUID string.
 + `created_at`: `2017-04-20T19:14:13Z` (string, required) - ISO 8601 date and time in UTC timezone.
 + `updated_at`: `2017-04-20T19:14:13Z` (string, required) - ISO 8601 date and time in UTC timezone.
 
-### Emergency_Contact
+### `Emergency_Contact`
 + first_name: Петро (string, required)
 + last_name: Іванов (string, required)
 + second_name: Миколайович (string, optional)
 + phones (array[`Phone`], required)
 
-### Phone
+### `Phone`
 + type: MOBILE (string, required) - `Dictionary PHONE_TYPE` type of phone Land Line or Mobile. At least one of type must be present. Each type can be represented only once.
 + number: `+380503410870` (string, required) - phone number in format '+38/'
 
-### Person
+### `Person`
 + first_name: Петро (string, required)
 + last_name: Іванов (string, required)
 + second_name: Миколайович (string, optional)
@@ -438,14 +471,14 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
     - email
     - phone
 
-### Authentication_Method
+### `Authentication_Method`
 + type (enum, required)
     - OTP
     - OFFLINE
     - NA
 + phone_number: `+38093*****85` (string, optional)
 
-### Address
+### `Address`
 + type: RESIDENCE (string, required) - `Dictionary ADDRESS_TYPE`. 
 + country: UA (enum[string], required) - `Dictionary COUNTRY`
 + area: Житомирська (string, required) - one of Ukraianian area
@@ -459,14 +492,14 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
 + apartment: 23 (string, optional) - number of appartment
 + zip: 02090 (string, optional) - system of postal codes
 
-### Document
+### `Document`
 + type: PASSPORT (string, required) - `Dictionary DOCUMENT_TYPE`
 + number: АА120518 (string, required) - document issue number
 + `expiration_date`: `2021-02-28` (string, optional) - `document expiration date. Required for NATIONAL_ID document type`
 + issued_by: `Рокитнянським РВ ГУ МВС Київської області` (string, optional) - authority which issued the document
 + issued_at: `2017-02-28` (string, optional) - the date when document was issued
 
-### Person_info_Public_PIS
+### `Person_info_Public_PIS`
 + first_name: Петро (string, required)
 + last_name: Іванов (string, required)
 + second_name: Миколайович (string, optional)
@@ -497,7 +530,7 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
     - email
     - phone
 
-### Confidant_Person_PIS
+### `Confidant_Person_PIS`
 + person_id: `b075f148-7f93-4fc2-b2ec-2d81b19a9b7b` (string, required)
 + relation_type: PRIMARY (enum, required)
     - PRIMARY
@@ -590,3 +623,70 @@ Look at [**Dummy Confidant patient sign-up**](#reference/public.-dummy-methods/s
 + preferred_way_communication: email (enum, optional) - the way how a patient wants to be reached
     - email
     - phone
+
+### `Update_Person_Request_PIS`
++ first_name: Петро (string, required)
++ last_name: Іванов (string, required)
++ second_name: Миколайович (string, optional)
++ birth_date: `2009-07-05` (string, required)
++ birth_country: `Україна` (string, required)
++ birth_settlement: `Вінниця` (string, required)
++ gender: MALE, FEMALE (enum[string], required)
++ email: email@example.com (string, optional)
++ no_tax_id: false (boolean, optional)
++ tax_id: 3999869394 (string, optional)
++ secret: secret (string, required)
++ documents (array, required)
+    + (object)
+        + type: PASSPORT (string, required) - `Dictionary DOCUMENT_TYPE`
+        + number: АА120518 (string, required) - document issue number
+        + issued_by: `Рокитнянським РВ ГУ МВС Київської області` (string, required) - authority which issued the document
+        + issued_at: `2017-02-28` (string, required) - the date when document was issued
+        + expiration_date: `2027-02-28` (string, optional) - the date when document expired, is necessery for those documents which has this date, ex, Temporary certificate, etc.
++ addresses (array[`Address`], required)
++ phones (array[`Phone`], optional)
++ unzr: `20090705-00011` (string, optional) - the record number in the demographic register
++ emergency_contact (object, required)
+    + include `Emergency_Contact`
++ preferred_way_communication: email (enum, optional) - the way how a patient wants to be reached
+    - email
+    - phone
+
+### `Person_request_details`
++ id: `b075f148-7f93-4fc2-b2ec-2d81b19a9b7b` (string, required)
++ status: APPROVED (enum, required)
+    - NEW
+    - APPROVED
+    - SIGNED
+    - REJECTED
+    - EXPIRED
+    - CANCELED
++ channel: `PIS` (string, optional)
++ inserted_at: `2021-11-09T00:00:00.000Z` (string, required) - ISO Datetime
++ updated_at: `2021-11-09T00:00:00.000Z` (string, optional) - ISO Datetime
++ `patient_signed`: true (boolean, required)
++ `process_disclosure_data_consent`: true (boolean, required) - ознакf погодження на використання персональних даних
++ content: `Person content` (string, optional) - HTML document 
++ person (`pis_person`)
+
+### `pis_person`
++ id: `7e9cffd9-c75f-45fb-badf-6e8d20b6a8a8` (string, required) - person id
++ first_name: Петро (string, required)
++ last_name: Іванов (string, required)
++ second_name: Миколайович (string, optional)
++ birth_date: `1991-08-19` (string, required)
++ birth_country: `Україна` (string, required)
++ birth_settlement: `Вінниця` (string, required)
++ gender: MALE, FEMALE (enum[string], required)
++ email: email@example.com (string, optional)
++ tax_id: 3126509816 (string, optional)
++ no_tax_id: true (boolean, required)
++ secret: secret (string, required)
++ documents (array[`Document`], required)
++ addresses (array[`Address`], required)
++ phones (array[`Phone`], optional)
++ preferred_way_communication: email (enum, optional) - the way how a patient wants to be reached
+    - email
+    - phone
++ unzr: `19900101-00099` (string, optional)
++ `emergency_contact`(`Emergency_Contact`, required)
