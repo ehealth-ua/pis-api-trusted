@@ -557,8 +557,8 @@ After person request is created, [Complete Update Person details](https://ehealt
 ### `Authentication_Method_PIS_Patient_With_Confidant`
 + type (enum, required)
     - THIRD_PERSON
-+ value: `c282f8a9-e709-40aa-94b4-dde1402bf4b6` (string, optional) - requered for type = THIRD_PERSON
-+ alias: `husband` (string, optional) - required it type = THIRD_PERSON,  and optional for type = OTP or OFFLINE
++ value: `c282f8a9-e709-40aa-94b4-dde1402bf4b6` (string, required)
++ alias: `husband` (string, required)
 
 ### `Person_Request_PIS`
 + first_name: Петро (string, required)
@@ -610,7 +610,7 @@ After person request is created, [Complete Update Person details](https://ehealt
         + expiration_date: `2027-02-28` (string, optional) - the date when document expired, is necessery for those documents which has this date, ex, Temporary certificate, etc.
 + addresses (array[`Address`], required)
 + phones (array[`Phone`], optional)
-+ `authentication_methods` (array[`Authentication_Method_PIS_Patient_With_Confidant`], optional)
++ `authentication_methods` (array[`Authentication_Method_PIS_Patient_With_Confidant`], required)
 + unzr: `20090705-00011` (string, optional) - the record number in the demographic register
 + emergency_contact (object, required)
     + include `Emergency_Contact`
